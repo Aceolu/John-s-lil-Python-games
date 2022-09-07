@@ -1,9 +1,13 @@
 #Credits to Tech with Tim for their tutorial. Hoping to learn something from this.
 
-
-from turtle import left, right
 import pygame
 pygame.init()
+pygame_icon = pygame.image.load('resources/icon.ico')
+pygame.display.set_icon(pygame_icon)
+
+
+boopsound = pygame.mixer.Sound("sounds/boop.ogg")
+winsound = pygame.mixer.Sound("sounds/win.ogg")
 
 #Window size
 WIDTH, HEIGHT = 700, 500
@@ -21,7 +25,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 20, 100
 BALL_RADIUS = 7
 
 SCORE_FONT = pygame.font.SysFont("comicsans", 50)
-WINNING_SCORE = 10
+WINNING_SCORE = 5
 
 
 class Paddle: #Controls how paddles render and control
@@ -102,8 +106,10 @@ def handle_collision(ball, left_paddle, right_paddle): #Collision math oh dear f
     #Makes ball bounce off floor and celing
     if ball.y + ball.radius >= HEIGHT:
         ball.y_vel *= -1
+        pygame.mixer.Sound.play(boopsound)
     elif ball.y - ball.radius <= 0:
         ball.y_vel *= -1
+        pygame.mixer.Sound.play(boopsound)
 
     #Makes ball bounce off paddles
     if ball.x_vel < 0:
@@ -116,7 +122,7 @@ def handle_collision(ball, left_paddle, right_paddle): #Collision math oh dear f
                 reduction_factor = (left_paddle.height / 2) / ball.MAX_VEL
                 y_vel = difference_in_y / reduction_factor
                 ball.y_vel = -1 * y_vel
-                ball.x_vel = ball.MAX_VEL + 1
+                pygame.mixer.Sound.play(boopsound)
 
 
     else:
@@ -129,6 +135,7 @@ def handle_collision(ball, left_paddle, right_paddle): #Collision math oh dear f
                 reduction_factor = (right_paddle.height / 2) / ball.MAX_VEL
                 y_vel = difference_in_y / reduction_factor
                 ball.y_vel = -1 * y_vel
+                pygame.mixer.Sound.play(boopsound)
         
 
 def handle_paddle_movement(keys, left_paddle, right_paddle): #Handles paddle movements
@@ -188,6 +195,7 @@ def main():
         if won: #Resets game when someone wins.
             text = SCORE_FONT.render(win_text, 1, WHITE)
             WIN.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 - text.get_height()//2))
+            pygame.mixer.Sound.play(winsound)
             pygame.display.update()
             pygame.time.delay(5000)
             ball.reset()
@@ -201,3 +209,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
